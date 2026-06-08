@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>KGC Café - HD Flags & Clear Wood</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Comfortaa:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-brown: #8d6e63; /* 木目を際立たせる背景色 */
+            --wood-light: #a67c52;
+            --wood-dark: #4a3728;
+            /* アップロード画像の色に近い鮮やかな青色に変更 */
+            --brass: #0b5ba3; 
+            /* ★ロゴ用の新しい、より明るい輝くゴールド★ */
+            --logo-gold: #ffdf00; 
+        }
+
+        body {
+            font-family: 'Comfortaa', 'Noto Sans JP', sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            
+            /* ★背景の木目を劇的に見えやすくする設定★ */
+            background-color: var(--bg-brown);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            background-repeat: repeat;
+            
+            box-sizing: border-box;
+            cursor: pointer; /* 画面をクリックできることを示すカーソル */
+        }
+
+        /* ★ロゴのスタイルを視認性高く、かわいく修正★ */
+        h1.logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 6vh; /* 少し大きく */
+            color: var(--logo-gold); /* 輝くゴールドに変更 */
+            margin: 10px 0 5px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            /* より強い影を付けて、木目背景から浮かび上がらせる */
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+            border-bottom: 3px solid var(--logo-gold); /* 下線もゴールドに */
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center; /* コーヒー絵と文字を垂直中央揃え */
+            gap: 15px; /* 絵と文字の隙間 */
+        }
+
+        /* ★かわいいコーヒー絵のスタイル★ */
+        .coffee-icon {
+            font-size: 5vh; /* 文字より少し小さめに */
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.8)); /* 絵にも影を付ける */
+        }
+
+        #html-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #main-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100vh - 120px); /* ロゴが大きくなった分調整 */
+            gap: 15px;
+        }
+
+        .clock-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 15px;
+        }
+
+        .card { 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.2vh;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.8s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            width: 23vw;
+            height: 38vh;
+        }
+
+        .card.day { background-color: #f8fafc; border: 8px solid var(--wood-light); color: #334155; }
+        .card.night { background-color: #111; border: 8px solid var(--wood-dark); color: #f1ebd9; }
+
+        /* 国旗・ラベルのレイアウト */
+        .name-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 2px;
+        }
+
+        .flag-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+
+        .name-main { font-size: 2.8vh; font-weight: 700; text-transform: uppercase; margin: 0; }
+        
+        .hub-label { 
+            font-size: 2.2vh; 
+            color: #fff; 
+            background-color: var(--brass); 
+            font-weight: 700; 
+            padding: 2px 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+
+        /* 国旗画像のスタイル（絵文字ではなく画像） */
+        .country-flag-img {
+            height: 3.5vh;
+            width: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            vertical-align: middle;
+        }
+        
+        .name-country { font-size: 1.3vh; opacity: 0.6; margin-bottom: 2px; font-weight: 700; }
+        .weather-info { font-size: 2vh; font-weight: 700; margin-bottom: 2px; }
+
+        .clock-frame { 
+            margin: 5px auto; border-radius: 50%; height: 16vh;
+            aspect-ratio: 1 / 1; position: relative; border: 3px solid var(--brass);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .dial { width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden; }
+        .card.day .dial { background: #fff; }
+        .card.night .dial { background: #050505; }
+
+        .number { position: absolute; width: 100%; height: 100%; text-align: center; font-size: 1.3vh; font-weight: 700; padding: 6%; box-sizing: border-box; }
+        .card.night .number { color: #f1ebd9; opacity: 0.7; }
+
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 4px; }
+        .hour { width: 5px; height: 5.5vh; background: #333; z-index: 4; margin-left: -2.5px; }
+        .min { width: 4px; height: 7.5vh; background: #666; z-index: 3; margin-left: -2px; }
+        .sec { width: 2px; height: 8.5vh; background: #c2410c; z-index: 5; margin-left: -1px; }
+        
+        .card.night .hour { background: var(--brass); }
+        .digital-time { font-size: 4vh; font-weight: 700; font-family: 'Courier New', monospace; margin-top: 5px; }
+
+        /* 追加：動画全画面レイヤー */
+        #video-screen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #video-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="html-screen">
+        <h1 class="logo">KGC Café <span class="coffee-icon">☕</span></h1>
+        
+        <div id="main-container">
+            <div class="clock-row" id="row-top"></div>
+            <div class="clock-row" id="row-bottom"></div>
+        </div>
+    </div>
+
+    <div id="video-screen">
+        <video id="promo-video" autoplay muted playsinline>
+            <source src="Ver1_2_CCR.mp4" type="video/mp4">
+            お使いの環境では動画を再生できません。
+        </video>
+    </div>
+
+    <script>
+        const rowTop = document.getElementById('row-top');
+        const rowBottom = document.getElementById('row-bottom');
+        const htmlScreen = document.getElementById('html-screen');
+        const videoScreen = document.getElementById('video-screen');
+        const promoVideo = document.getElementById('promo-video');
+        
+        // 【テスト用設定】最初は確認しやすいように5秒（5000）にしています。
+        // 無事に動いたら、ここを 180000 （3分）に書き換えてください。
+        const SWITCH_TO_VIDEO_MS = 180000; 
+        
+        let videoTimer = null; // タイマー管理用の変数
+        
+        const zones = [
+            { id: "Asia/Tokyo", name: "TOKYO", country: "JAPAN", temp: 18, hub: "KGC-J", code: "jp" },
+            { id: "Asia/Shanghai", name: "BEIJING", country: "CHINA", temp: 15, code: "cn" },
+            { id: "Asia/Jakarta", name: "JAKARTA", country: "INDONESIA", temp: 28, code: "id" },
+            { id: "Asia/Kolkata", name: "DELHI", country: "INDIA", temp: 30, code: "in" },
+            { id: "Europe/Amsterdam", name: "AMSTERDAM", country: "NETHERLANDS", temp: 12, hub: "KGC-E", code: "nl" },
+            { id: "America/New_York", name: "NEW YORK", country: "USA", temp: 14, hub: "KGC-A", code: "us" },
+            { id: "America/Mexico_City", name: "MEXICO CITY", country: "MEXICO", temp: 22, code: "mx" }
+        ];
+
+        function render() {
+            let gridHTMLTop = "";
+            let gridHTMLBottom = "";
+
+            zones.forEach((z, index) => {
+                const safeId = z.id.replace(/\//g, '-');
+                const hubTag = z.hub ? `<span class="hub-label">${z.hub}</span>` : '';
+                const flagUrl = `https://flagcdn.com/h80/${z.code}.png`;
+                const countryFlagImg = `<img src="${flagUrl}" alt="${z.country} Flag" class="country-flag-img">`;
+                
+                const cardHTML = `
+                <div class="card" id="card-${safeId}">
+                    <div class="name-container">
+                        <div class="flag-label-row">
+                            ${countryFlagImg}
+                            ${hubTag}
+                        </div>
+                        <span class="name-main">${z.name}</span>
+                    </div>
+                    <div class="name-country">${z.country}</div>
+                    <div class="weather-info" id="weather-${safeId}">--°C</div>
+                    <div class="clock-frame">
+                        <div class="dial">
+                            ${[...Array(12)].map((_,i)=>`<div class="number" style="transform:rotate(${(i+1)*30}deg)"><span style="display:inline-block;transform:rotate(-${(i+1)*30}deg)">${i+1}</span></div>`).join('')}
+                            <div class="hand hour" id="h-${safeId}"></div>
+                            <div class="hand min" id="m-${safeId}"></div>
+                            <div class="hand sec" id="s-${safeId}"></div>
+                        </div>
+                    </div>
+                    <div class="digital-time" id="d-${safeId}">00:00</div>
+                </div>`;
+                
+                if (index < 4) {
+                    gridHTMLTop += cardHTML;
+                } else {
+                    gridHTMLBottom += cardHTML;
+                }
+            });
+            rowTop.innerHTML = gridHTMLTop;
+            rowBottom.innerHTML = gridHTMLBottom;
+        }
+
+        function tick() {
+            const now = new Date();
+            zones.forEach(z => {
+                const id = z.id.replace(/\//g, '-');
+                const fmt = new Intl.DateTimeFormat('en-US', {
+                    timeZone: z.id, hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
+                });
+                const p = Object.fromEntries(fmt.formatToParts(now).map(x => [x.type, x.value]));
+                const hElement = document.getElementById(`h-${id}`);
+                const mElement = document.getElementById(`m-${id}`);
+                const sElement = document.getElementById(`s-${id}`);
+                const dElement = document.getElementById(`d-${id}`);
+                
+                if (!hElement || !mElement || !sElement || !dElement) return;
+
+                const h = parseInt(p.hour), m = parseInt(p.minute), s = parseInt(p.second);
+
+                sElement.style.transform = `rotate(${s * 6}deg)`;
+                mElement.style.transform = `rotate(${(m * 6) + (s * 0.1)}deg)`;
+                hElement.style.transform = `rotate(${((h % 12) * 30) + (m * 0.5)}deg)`;
+                dElement.innerText = `${p.hour.padStart(2,'0')}:${p.minute.padStart(2,'0')}`;
+
+                const card = document.getElementById(`card-${id}`);
+                const isDay = h >= 6 && h < 18;
+                card.className = isDay ? 'card day' : 'card night';
+
+                const weatherElem = document.getElementById(`weather-${id}`);
+                if (weatherElem) {
+                    const icon = isDay ? "☀️" : "🌙";
+                    const currentTemp = isDay ? z.temp : z.temp - 5;
+                    weatherElem.innerHTML = `${icon} ${currentTemp}°C`;
+                }
+            });
+            setTimeout(tick, 1000);
+        }
+
+        // 動画表示に切り替える関数（自動再生ブロック対策強化版）
+        function switchToVideo() {
+            htmlScreen.style.display = 'none';
+            videoScreen.style.display = 'flex';
+            
+            // プログラム側でも確実にミュートと頭出しを設定
+            promoVideo.muted = true;
+            promoVideo.currentTime = 0;
+
+            const playPromise = promoVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(err => {
+                    console.log('動画の自動再生がブロックされました。画面をクリックしてください。', err);
+                    
+                    // 【重要】ブロックされた場合、ユーザーが画面を1回でもクリックすれば即再生が始まるようにする保険処理
+                    const retryPlay = () => {
+                        promoVideo.play().then(() => {
+                            // 再生が成功したらクリックイベントを解除
+                            document.removeEventListener('click', retryPlay);
+                        }).catch(e => console.log("再生再試行失敗:", e));
+                    };
+                    document.addEventListener('click', retryPlay);
+
+                    // 万が一クリックされずにフリーズするのを防ぐため、5秒後に一旦時計に戻すタイマー
+                    setTimeout(switchToClock, 5000);
+                });
+            }
+        }
+
+        // 時計表示に戻す関数
+        function switchToClock() {
+            videoScreen.style.display = 'none';
+            htmlScreen.style.display = 'flex';
+            
+            // 再び指定時間後に動画へ切り替えるタイマーをセット
+            clearTimeout(videoTimer);
+            videoTimer = setTimeout(switchToVideo, SWITCH_TO_VIDEO_MS);
+        }
+
+        // 動画の再生が終了した時のイベントリスナー（交互に無限ループさせる心臓部）
+        promoVideo.addEventListener('ended', () => {
+            switchToClock();
+        });
+
+        // 最初の画面表示時に一度だけブラウザのブロックを解除するための仕組み
+        document.addEventListener('click', () => {
+            // ユーザーが画面を触ったことでブラウザのセキュリティロックが解除されます
+            console.log('ユーザーアクションを検知。自動再生ブロックが解除されました。');
+        }, { once: true }); // 1回クリックされたらこのイベント自体を消去
+
+        // 初期実行
+        render();
+        tick();
+        // 最初のタイマーセット
+        videoTimer = setTimeout(switchToVideo, SWITCH_TO_VIDEO_MS);
+    </script>
+</body>
+</html>
