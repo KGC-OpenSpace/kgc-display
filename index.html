@@ -192,9 +192,8 @@
         </div>
     </div>
 
-    <!-- 追加：動画再生エリア -->
     <div id="video-screen">
-        <video id="promo-video" autoplay muted playsinline loop>
+        <video id="promo-video" autoplay muted playsinline>
             <source src="Ver1_2_CCR_1.mp4" type="video/mp4">
             お使いの環境では動画を再生できません。
         </video>
@@ -209,8 +208,8 @@
         
         // 180秒後に動画へ切り替え
         const SWITCH_TO_VIDEO_MS = 180000;
+        let videoTimer = null; // タイマー管理用の変数
         
-        // メキシコとアメリカの順序は入れ替えた状態を維持しています
         const zones = [
             { id: "Asia/Tokyo", name: "TOKYO", country: "JAPAN", temp: 18, hub: "KGC-J", code: "jp" },
             { id: "Asia/Shanghai", name: "BEIJING", country: "CHINA", temp: 15, code: "cn" },
@@ -299,6 +298,7 @@
             setTimeout(tick, 1000);
         }
 
+        // 動画表示に切り替える関数
         function switchToVideo() {
             htmlScreen.style.display = 'none';
             videoScreen.style.display = 'flex';
@@ -308,13 +308,32 @@
             if (playPromise !== undefined) {
                 playPromise.catch(err => {
                     console.log('動画の自動再生に失敗:', err);
+                    // 自動再生ブロック対策：失敗した場合は5秒後に強制的に時計に戻す
+                    setTimeout(switchToClock, 5000);
                 });
             }
         }
 
+        // 時計表示に戻す関数
+        function switchToClock() {
+            videoScreen.style.display = 'none';
+            htmlScreen.style.display = 'flex';
+            
+            // 再び180秒後に動画へ切り替えるタイマーをセット（無限ループ化）
+            clearTimeout(videoTimer);
+            videoTimer = setTimeout(switchToVideo, SWITCH_TO_VIDEO_MS);
+        }
+
+        // 動画の再生が終了した時のイベントリスナー
+        promoVideo.addEventListener('ended', () => {
+            switchToClock();
+        });
+
+        // 初期実行
         render();
         tick();
-        setTimeout(switchToVideo, SWITCH_TO_VIDEO_MS);
+        // 最初のタイマーセット
+        videoTimer = setTimeout(switchToVideo, SWITCH_TO_VIDEO_MS);
     </script>
 </body>
 </html>
